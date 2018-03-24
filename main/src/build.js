@@ -2,8 +2,9 @@ const { spawn } = require('child_process');
 const path = require('path');
 const chalk = require('chalk');
 
+const buildPath = path.join(__dirname, '../../test');
 const config = {
-  "docker": ["docker build -t server:v1 ./test"],
+  "docker": [`docker build -t my-server:v1 ${buildPath}`],
   "kube": ["kubectl create -f test/deployment.yaml"],
   "service": "my-service",
   "reload": "true",
@@ -46,12 +47,13 @@ process.on('message', (m) => {
   const dockerPromises = config.docker.map((build) => { return create(build); });
 
   Promise.all(dockerPromises).then((codes) => {
+    // console.log(buildPath);
     console.log("\t" + chalk.green(`Docker containers rebuilt.`));
     process.send({message: "done"})
-    return Promise.all(kubePromises);
+    // return Promise.all(kubePromises);
   })
-  .then((code) => {
-    console.log("\t" + chalk.green(`Kubernetes objects rebuilt.`));
-    process.send({message: "done"})
-  })
+  // .then((code) => {
+  //   console.log("\t" + chalk.green(`Kubernetes objects rebuilt.`));
+  //   process.send({message: "done"})
+  // })
 })

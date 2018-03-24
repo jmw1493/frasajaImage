@@ -5,7 +5,7 @@ const app = express();
 const path = require('path');
 
 app.get('/', (req, res, next) => {
-  console.log("fghj")
+  console.log("fghjlaksjdhfkjahdsfkjh")
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
