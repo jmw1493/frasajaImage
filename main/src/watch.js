@@ -1,10 +1,37 @@
 const chokidar = require('chokidar');
 const path = require('path');
+const { exec } = require('child_process');
+const fs = require('fs')
 
 let obj = {
   event: [],
   path: []
 };
+
+const watchPath = path.resolve(__dirname, '../test');
+//
+// function watch(){
+//   setTimeout(() => {
+//     // exec('cd test && ls', (err, stdout, stderr) => {
+//     //   if (err || stderr) {
+//     //     process.send({message: [`err: ${stderr || err}`]});
+//     //     return;
+//     //   }
+//     //   process.send({message: [`stdout: ${stdout}`]});
+//     //   watch();
+//     // });
+//     fs.readFile(watchPath, (err, data) => {
+//       if (err) {
+//         process.send({message: [`err: ${stderr || err}`]});
+//       }
+//       process.send({message: [`stdout: ${stdout}`]});
+//       console.log(data);
+//     });
+//
+//   }, 1000);
+// }
+//
+// watch();
 
 function send(e){
   setTimeout(() => {
@@ -13,12 +40,13 @@ function send(e){
         return obj.path.indexOf(path) === i;
       }).join("\n\t") + "\npid: " + process.pid;
 
-      process.send({message: str});
+      process.send({message: [str]});
 
       obj = {
         event: [],
         path: []
       };
+
       return send(0);
     }
     return send(obj.event.length);
@@ -26,13 +54,19 @@ function send(e){
 }
 send(0);
 
-const client = chokidar.watch([path.resolve(__dirname, '../../test')], {
-  persistent: true
+const client = chokidar.watch([watchPath], {
+  persistent: true,
+  usePolling: true,
+  interval: 100
 });
 
 client.on('all', function(event, path){
   obj.event.push(event);
   obj.path.push(path);
+  // if(event === 'add'){
+  //   return;
+  // }
+  // process.send({message: [`${event}: ${path}`]});
 });
 
 

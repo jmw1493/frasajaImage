@@ -2,42 +2,43 @@ const { fork, exec } = require('child_process');
 const path = require('path');
 const express = require('express');
 const app = express();
-// const buildPath = path.join(__dirname, './build.js');
-// console.log(buildPath);
-// console.log(__dirname);
+const socket = require('socket.io');
 
-const buildPath = path.join(__dirname, './build.js');
-const build = fork(buildPath);
-build.on('message', (m) => {
-  console.log('PARENT got message from build:', m.message);
-});
-build.send({message: 'go'});
 
-const watchPath = path.join(__dirname, './watch.js');
-const watch = fork(watchPath);
-watch.on('message', (m) => {
-  console.log('PARENT got message from watch:', m.message);
-  setTimeout(() => {
+function runWatch(socket){
+  const buildPath = path.join(__dirname, './build.js');
+  const build = fork(buildPath);
+
+  socket.emit('refresh-page', {
+    message: 'I\'m a socket message, yo'
+  });
+
+  build.on('message', (m) => {
+    socket.emit('refresh-page', m);
+  });
+  build.send({message: 'go'});
+
+  const watchPath = path.join(__dirname, './watch.js');
+  const watch = fork(watchPath);
+
+  watch.on('message', (m) => {
+    socket.emit('refresh-page', m);
     build.send({message: 'go'});
-  }, 1000);
+  })
+}
+
+
+app.get('/', (req, res, next) => {
+  res.sendFile(path.resolve(__dirname, './index.html'));
 })
 
+const PORT = process.env.PORT || 8080;
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
+const io = socket(server);
 
-// app.get('/', (req, res, next) => {
-//   exec(`ls`, (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`exec error: ${error}`);
-//       res.send(error);
-//       return;
-//     }
-//     console.log(`stdout: ${stdout}`);
-//     console.log(`stderr: ${stderr}`);
-//     res.send(buildPath);
-//   });
-// })
-//
-//
-// const PORT = process.env.PORT || 8080;
-// app.listen(PORT, () => {
-//   console.log(`Server listening on ${PORT}`);
-// })
+io.on('connection', (socket) => {
+  console.log('connected to socket');
+  runWatch(socket);
+});

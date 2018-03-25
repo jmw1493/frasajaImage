@@ -2,7 +2,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const chalk = require('chalk');
 
-const buildPath = path.join(__dirname, '../../test');
+const buildPath = path.join(__dirname, '../test');
 const config = {
   "docker": [`docker build -t my-server:v1 ${buildPath}`],
   "kube": ["kubectl create -f test/deployment.yaml"],
@@ -19,19 +19,26 @@ const create = (command) => {
 
   return new Promise((resolve, reject) => {
     const deploy = spawn(first, arr);
+    let res = '';
 
     deploy.stdout.on('data', (data) => {
       console.log('stdout:', `${data}`);
+      res += `
+      stdout: ${data}
+      `
     });
 
     deploy.stderr.on('data', (data) => {
       console.log('stderr:', chalk.red(`${data}`));
+      res += `
+      stderr: ${data}
+      `;
       // reject(command);
     });
 
     deploy.on('close', (code) => {
       console.log('exit:', chalk.green(`child process exited with code ${code}`));
-      resolve(code);
+      resolve(res);
     });
   })
 }
@@ -49,7 +56,8 @@ process.on('message', (m) => {
   Promise.all(dockerPromises).then((codes) => {
     // console.log(buildPath);
     console.log("\t" + chalk.green(`Docker containers rebuilt.`));
-    process.send({message: "done"})
+    process.send({message: codes});
+    // process.send({message: "done"})
     // return Promise.all(kubePromises);
   })
   // .then((code) => {
