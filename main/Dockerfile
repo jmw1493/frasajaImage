@@ -1,31 +1,22 @@
 # set the base image to Debian
 # https://hub.docker.com/_/debian/
-FROM teracy/ubuntu:16.04-dind-17.06.0-ce
+FROM ubuntu:16.04
 
-# update the repository sources list
-# and install dependencies
-RUN apt-get update \
-    && apt-get install -y curl \
-    && apt-get -y autoclean
+# install node, docker, and kubectl
+ARG DOCKER_VERSION="latest"
+ADD install.sh ./install.sh
+RUN chmod +x ./install.sh \
+    && ./install.sh
 
-# update the repository sources list
-# and install dependencies
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash && \
-    apt-get install -y nodejs build-essential
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
-
 RUN npm install
-# If you are building your code for production
-# RUN npm install --only=production
 
 # Bundle app source
 COPY . .
+EXPOSE 8080
 
-# confirm installation
-RUN node -v
-RUN npm -v
-# CMD ["npm", "start"]
+CMD ["npm", "start"]
