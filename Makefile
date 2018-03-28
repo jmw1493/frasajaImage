@@ -18,10 +18,12 @@ create:
 	# npm run build
 	# cd ../
 
-	docker image build -t my-server:v1 ./test
+	# docker image build -t my-server:v1 ./test
+	docker build -t my-server:v1 ./test
 	kubectl create -f ./test/deployment.yaml
 
-	docker image build -t kubernetes-frasaja:v1 ./main
+	# docker image build -t kubernetes-frasaja:v1 ./main
+	docker build -t kubernetes-frasaja:v1 ./main
 	kubectl create -f ./main/deployment.yaml
 
 	# minikube service kubernetes-frasaja
