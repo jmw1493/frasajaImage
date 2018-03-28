@@ -1,2 +1,4 @@
 */node_modules
-*/package*.json
+*/package-lock.json
+main/build/bundle.js
+main/build/styles.css

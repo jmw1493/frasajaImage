@@ -21,12 +21,12 @@ spec:
         - mountPath: /test
           name: host-mount
       volumes:
+      # attach host's docker socket (how we make api requests to docker daemon)
       - name: docker-sock-volume
         hostPath:
-          # location on host
           path: /var/run/docker.sock
-          # this field is optional
           type: Socket
+      # attach host's files that we want to watch
       - name: host-mount
         hostPath:
           path: /mount-9p
