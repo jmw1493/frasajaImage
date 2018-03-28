@@ -14,16 +14,8 @@ delete:
 create:
 	@eval $$(minikube docker-env) ;\
 
-	# cd ./main
-	# npm run build
-	# cd ../
+	# docker build -t my-server:v1 ./test
+	# kubectl create -f ./test/deployment.yaml
 
-	docker image build -t my-server:v1 ./test
-	kubectl create -f ./test/deployment.yaml
-
-	docker image build -t kubernetes-frasaja:v1 ./main
+	docker build -t kubernetes-frasaja:v1 ./main
 	kubectl create -f ./main/deployment.yaml
-
-	# minikube service kubernetes-frasaja
-	# minikube service my-service
-	# docker run -it -v /var/run/docker.sock:/var/run/docker.sock dood:v1
