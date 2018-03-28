@@ -24,7 +24,6 @@ DOCKER_COMPOSE_VERSION="$(curl -s https://github.com/docker/toolbox/releases/tag
 curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose; \
 chmod +x /usr/local/bin/docker-compose
 
-# update the repository sources list
-# and install dependencies
+# install latest version of node and npm
 curl -sL https://deb.nodesource.com/setup_6.x | bash && \
     apt-get install -y nodejs build-essential

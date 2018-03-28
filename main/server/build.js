@@ -7,8 +7,7 @@ const config = {
   "docker": [`docker build -t my-server:v1 ${buildPath}`],
   "kube": ["kubectl create -f test/deployment.yaml"],
   "service": "my-service",
-  "reload": "true",
-  "html": "test/index.html"
+  "reload": "true"
 };
 
 const create = (command) => {
@@ -17,6 +16,9 @@ const create = (command) => {
   arr.splice(0, 1);
   console.log(chalk.cyan("\n" + command));
 
+  // spawn creates a new process
+  // we add events listeners to the process and send the
+  // data back to the parent process in index.js
   return new Promise((resolve, reject) => {
     const deploy = spawn(first, arr);
     let res = '';
@@ -33,7 +35,6 @@ const create = (command) => {
       res += `
       stderr: ${data}
       `;
-      // reject(command);
     });
 
     deploy.on('close', (code) => {
@@ -43,18 +44,15 @@ const create = (command) => {
   })
 }
 
-// build all docker images then create kubernetes objects
 
-// const kubePromises = config.kube.map((build) => { return create(build); });
-
-// this will provide an error if already created
-// however, you only need to rebuild image in order to see the change
 process.on('message', (m) => {
   console.log('BUILD RECEIVED', m.message);
   const dockerPromises = config.docker.map((build) => { return create(build); });
 
+  // when all the docker containers finish building...
+  // we send the data to index.js where it send the data back to the front end
+  // through the socket
   Promise.all(dockerPromises).then((codes) => {
-    // console.log(buildPath);
     console.log("\t" + chalk.green(`Docker containers rebuilt.`));
     process.send({message: codes});
     // process.send({message: "done"})
