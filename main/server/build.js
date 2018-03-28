@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 const buildPath = path.join(__dirname, '../test');
 const config = {
-  "docker": [`docker build -t my-server:v1 ${buildPath}`],
+  "docker": [`docker build --rm -t my-server:v1 ${buildPath}`],
   "kube": ["kubectl create -f test/deployment.yaml"],
   "service": "my-service",
   "reload": "true"
@@ -46,20 +46,22 @@ const create = (command) => {
 
 
 process.on('message', (m) => {
-  console.log('BUILD RECEIVED', m.message);
-  const dockerPromises = config.docker.map((build) => { return create(build); });
-
   // when all the docker containers finish building...
   // we send the data to index.js where it send the data back to the front end
   // through the socket
+  const dockerPromises = config.docker.map((build) => { return create(build); });
+  let message = '';
+
   Promise.all(dockerPromises).then((codes) => {
-    console.log("\t" + chalk.green(`Docker containers rebuilt.`));
-    process.send({message: codes});
-    // process.send({message: "done"})
-    // return Promise.all(kubePromises);
+    message = codes;
+    const cleanPromises = ['docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'].map((command) => { return create(command); });
+    return Promise.all(cleanPromises)
   })
-  // .then((code) => {
-  //   console.log("\t" + chalk.green(`Kubernetes objects rebuilt.`));
-  //   process.send({message: "done"})
-  // })
+  .then((code) => {
+    const kubePromises = config.kube.map((command) => { return create(command); });
+    return Promise.all(kubePromises);
+  })
+  .then((code) => {
+    process.send({message: message + code});
+  })
 })

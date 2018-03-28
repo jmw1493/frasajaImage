@@ -24,6 +24,10 @@ DOCKER_COMPOSE_VERSION="$(curl -s https://github.com/docker/toolbox/releases/tag
 curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose; \
 chmod +x /usr/local/bin/docker-compose
 
+# install kubectl client
+curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl; \
+chmod +x /usr/local/bin/kubectl \
+
 # install latest version of node and npm
 curl -sL https://deb.nodesource.com/setup_6.x | bash && \
     apt-get install -y nodejs build-essential
