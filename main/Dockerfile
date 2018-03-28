@@ -15,15 +15,17 @@ RUN chmod +x ./install.sh \
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
+RUN npm install webpack@3.11.0 -g
+WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
+# use webpack to bundle and remove the uneccessary files
+COPY . ./
+RUN webpack
+RUN rm -r ./client
+RUN rm ./webpack.config.js
 
-# Bundle app source
-# dockerignore will ignore the old client folder
-COPY . .
-# RUN npm install webpack -g
-# RUN webpack
 EXPOSE 8080
 
 CMD ["npm", "start"]

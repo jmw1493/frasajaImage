@@ -62,6 +62,6 @@ process.on('message', (m) => {
     return Promise.all(kubePromises);
   })
   .then((code) => {
-    process.send({message: message + code});
+    process.send({message: message});
   })
 })

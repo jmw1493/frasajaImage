@@ -18,7 +18,7 @@ spec:
         volumeMounts:
         - mountPath: /var/run/docker.sock
           name: docker-sock-volume
-        - mountPath: /test
+        - mountPath: /usr/src/app/test
           name: host-mount
       volumes:
       # attach host's docker socket (how we make api requests to docker daemon)
