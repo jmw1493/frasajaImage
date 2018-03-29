@@ -18,27 +18,27 @@ const socket = io.connect(
   }
 );
 
-const add = document.getElementById("my-list");
-const button = document.getElementById("refresh");
+// const add = document.getElementById("my-list");
+// const button = document.getElementById("refresh");
 
-const frame = document.getElementById("my-frame");
-frame.src = url;
+// const frame = document.getElementById("my-frame");
+// frame.src = url;
 
-button.addEventListener('click', function(){
-  frame.src = url
-})
+// button.addEventListener('click', function(){
+//   frame.src = url
+// })
 
 socket.on('refresh-page', (data) => {
   console.log('client socket receiving something', data);
   setTimeout(() => {
-    frame.src = url;
+    // frame.src = url;
   }, 500)
 
-  data.message.forEach((m) => {
-    const li = document.createElement('li');
-    li.append(m);
-    add.append(li);
-  })
+  // data.message.forEach((m) => {
+  //   const li = document.createElement('li');
+  //   li.append(m);
+  //   add.append(li);
+  // })
 });
 // ====================================================
 

@@ -4,8 +4,8 @@
 
 .PHONY: delete
 delete:
-	kubectl delete deployment my-deployment
-	kubectl delete service my-service
+	# kubectl delete deployment my-deployment
+	# kubectl delete service my-service
 
 	kubectl delete deployment kubernetes-frasaja
 	kubectl delete service kubernetes-frasaja
