@@ -4,8 +4,8 @@
 
 .PHONY: delete
 delete:
-	# kubectl delete deployment my-deployment
-	# kubectl delete service my-service
+	kubectl delete deployment my-deployment
+	kubectl delete service my-service
 
 	kubectl delete deployment kubernetes-frasaja
 	kubectl delete service kubernetes-frasaja
@@ -14,8 +14,9 @@ delete:
 create:
 	@eval $$(minikube docker-env) ;\
 
-	# docker build -t my-server:v1 ./test
-	# kubectl create -f ./test/deployment.yaml
+	docker build -t my-server:v1 ./test
 
 	docker build -t kubernetes-frasaja:v1 ./main
 	kubectl create -f ./main/deployment.yaml
+
+	kubectl create -f ./test/deployment.yaml

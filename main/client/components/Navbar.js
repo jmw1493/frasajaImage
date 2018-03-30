@@ -2,15 +2,20 @@ import React from "react";
 
 class Navbar extends React.Component{
 
-  render(){
-    let serviceArr = [];
+  render() {
+    const headerArr = [], serviceArr = [];
     if (this.props.whichScreen === 'service-view') {
-      this.props.services.forEach((service, index) => {
+      headerArr.push(
+      <div id='service-header'>
+        <h1 key={20}>Services</h1>
+      </div>
+    );
+      Object.keys(this.props.services).forEach((service, index) => {
         serviceArr.push(
           <button 
             key={index} 
             id={index} 
-            class='service-button' 
+            className='service-button' 
             onClick={this.props.changeService}
           >
             service {index}
@@ -20,7 +25,7 @@ class Navbar extends React.Component{
     }
     return (
       <nav>
-        <h1>Navbarrrr</h1>
+        {headerArr}
         <div id='service-list'>
           {serviceArr}
         </div>

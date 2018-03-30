@@ -2,43 +2,51 @@ import React from "react";
 
 class Screen extends React.Component{
 
-  render(){   
+  render() {   
+    //just have to make the li's real li's somehow (not strings)
+    let dataArr = [];
+    this.props.data.forEach((m) => {
+      dataArr.push(<li>{m}</li>);
+    });
     //conditional render depending on this.props.whichScreen  
     let extraDiv = [];
     switch(this.props.whichScreen) {
       case 'service-view':
-        let iframePort = this.props.service[this.props.iframe];
-        let iframeUrl = "http://" + window.location.hostname + iframePort;
+        let iframePort = this.props.services[this.props.iframe];
+        let iframeUrl = "http://" + window.location.hostname + ':' + iframePort;
         extraDiv.push(
-          <iframe id='screen-display' src={iframeUrl}></iframe>
+          <iframe key={15} id='screen-display' src={iframeUrl}></iframe>
         );
-      case 'console':
+        break;
+      case 'terminal-output':
         extraDiv.push(
-          //plain div for now
-          <div id='screen-display'></div>
+          <div key={16} id='screen-display'>
+            <ul id='ul-data'>
+              {dataArr}
+            </ul>
+          </div>
         );
+        break;
       case 'visualizer':
         extraDiv.push(
           //plain div for now
-          <div id='screen-display'></div>
+          <div key={17} id='screen-display'></div>
         );
+        break;
     }
     return (
       <div id='screen'>
         <div id='above-iframe'>
           <div id='tabs'>
-            <button id='service-view' onClick={this.props.changeScreen}>Service View</button>
-            <button id='console' onClick={this.props.changeScreen}>Console</button>
-            <button id='visualizer' onClick={this.props.changeScreen}>Visualizer</button>
+            <button key={10} id='service-view' onClick={this.props.changeScreen}>Service View</button>
+            <button key={11} id='terminal-output' onClick={this.props.changeScreen}>Terminal Output</button>
+            <button key={12} id='visualizer' onClick={this.props.changeScreen}>Visualizer</button>
           </div>
-          <button id="refresh">refresh</button>
+          <button id="refresh" onClick={this.props.refresh}>refresh</button>
         </div>
       
         {extraDiv}
 
-        {/* src changes based on state's iframe property... do a conditional here?*/}
-        {/* <iframe id="screen-display" src={iframeUrl}></iframe> */}
-        {/* <ul id="my-list"></ul> */}
       </div>
     );
   }

@@ -1,12 +1,14 @@
 import React from "react";
+// import img from "../img/logo.png";
 
 class Header extends React.Component{
 
   render(){
     return (
-      <header>
-        <h1>Headerrrr</h1>
-      </header>
+      <div id='header'>
+        {/* <img src={img} alt="logo"/> */}
+        {/* <h1>FRASAJA</h1> */}
+      </div>
     );
   }
 }
