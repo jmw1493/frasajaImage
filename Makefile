@@ -4,11 +4,14 @@
 
 .PHONY: delete
 delete:
-	kubectl delete deployment my-deployment
-	kubectl delete service my-service
-
 	kubectl delete deployment kubernetes-frasaja
 	kubectl delete service kubernetes-frasaja
+	# docker rmi kubernetes-frasaja:v1 -f
+
+	kubectl delete deployment my-deployment
+	kubectl delete service my-service
+	docker rmi my-server:v1 -f
+
 
 .PHONY: create
 create:
@@ -19,4 +22,3 @@ create:
 	docker build -t kubernetes-frasaja:v1 ./main
 	kubectl create -f ./main/deployment.yaml
 
-	kubectl create -f ./test/deployment.yaml
