@@ -1,7 +1,7 @@
 const chokidar = require('chokidar');
 const path = require('path');
 const { exec } = require('child_process');
-const fs = require('fs')
+const fs = require('fs');
 
 let obj = {
   event: [],
