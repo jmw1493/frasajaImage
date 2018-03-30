@@ -4,7 +4,8 @@ const path = require('path');
 
 app.get('/', (req, res, next) => {
   console.log("fghjlaksjdhfkjahdsfkjh")
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.send("hello again Frank");
+  // res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;

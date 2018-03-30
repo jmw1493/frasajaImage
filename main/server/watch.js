@@ -37,7 +37,8 @@ send(0);
 const client = chokidar.watch([watchPath], {
   persistent: true,
   usePolling: true,
-  interval: 500
+  interval: 500,
+  ignored: '/usr/src/app/test/node_modules'
 });
 
 // collects the paths and events when a file changes

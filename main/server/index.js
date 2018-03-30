@@ -22,7 +22,7 @@ function runWatch(socket){
   build.on('message', (m) => {
     socket.emit('refresh-page', m);
   });
-  build.send({message: 'start'});
+  // build.send({message: 'start'});
 
   // watch.js watches for changes in files
   // the watch process sends back messages on the changed files
