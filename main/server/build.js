@@ -39,6 +39,12 @@ const onSuccessDockerRemove = (image, oldID) => {
   }
 }
 
+const onErrorDockerRemove = (command, image, oldID) => {
+  return (message) => {
+    
+  }
+}
+
 // ===========================CREATE PROMISES TO CONTROL FLOW==============================================
 const create = (command, errCB=function(){}, successCB=function(){}) => {
   const arr = command.trim().split(' ');
