@@ -45,10 +45,10 @@ class App extends React.Component{
   
   componentDidMount() {
     //fetch services and store them in state
-    const url = '...';
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
+    // const url = '...';
+    // fetch(url)
+    //   .then((res) => res.json())
+    //   .then((data) => {
         // initial obj
         // data.serviceList.services.forEach((service, index) => {
         //   let portNum = service.internalEndpoint.ports[0].nodePort
@@ -56,7 +56,7 @@ class App extends React.Component{
         // })
         //setState({services: obj})
 
-       })
+      //  })
     //http://192.168.64.27:30000/api/v1/overview/default?filterBy=&itemsPerPage=10&name=&page=1&sortBy=d,creationTimestamp
   }
 
