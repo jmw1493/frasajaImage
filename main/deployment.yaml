@@ -29,7 +29,7 @@ spec:
       # attach host's files that we want to watch
       - name: host-mount
         hostPath:
-          path: /mount-9p
+          path: /Users/Perpetuity/github/frasajaImage/test
           type: Directory
 ---
 kind: Service
