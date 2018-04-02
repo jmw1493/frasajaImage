@@ -1,10 +1,13 @@
 const { spawn } = require('child_process');
 const path = require('path');
+
+const frasajaJson = require(path.join(__dirname, '../test/frasaja.json'));
 const config = require(path.join(__dirname, './config.js'));
 const images = Object.keys(config);
 
 const imageCache = {}; // stores ids of built images
 let init = false;
+let version = 1;
 
 // ===========================CALLBACKS USED IN CREATE()==================================================
 // callback for when a docker container successfully builds
@@ -18,14 +21,14 @@ const successDockerBuild = (image) => {
     if(i > -1){
       const id = message.slice(i + built.length);
       if(config[image].newImageID) {
-        config[image].oldImageIDs.push(config[image].newImageID);
+        config[image].oldImageIDs[config[image].newImageID] = true;
       }
       config[image].newImageID = id.slice(0, id.indexOf('\n')).trim();
     }
 
     const j = message.indexOf(tagged);
     if(j > -1){
-      const name = message.slice(i + tagged.length);
+      const name = message.slice(j + tagged.length);
       config[image].newName = name.slice(0, name.indexOf('\n')).trim();
     }
   }
@@ -34,14 +37,14 @@ const successDockerBuild = (image) => {
 // remove image ID from oldImageIDs when image is successfully deleted
 const onSuccessDockerRemove = (image, oldID) => {
   return (message) => {
-    const index = config[image].oldImageIDs.indexOf(oldID);
-    config[image].oldImageIDs.splice(index, 1);
+    // const index = config[image].oldImageIDs.indexOf(oldID);
+    delete config[image]['oldImageIDs'][oldID];
   }
 }
 
 const onErrorDockerRemove = (command, image, oldID) => {
   return (message) => {
-    
+
   }
 }
 
@@ -57,18 +60,23 @@ const create = (command, errCB=function(){}, successCB=function(){}) => {
   return new Promise((resolve, reject) => {
     const deploy = spawn(first, arr);
     let res = '';
+    process.send({message: ["$: " + command]});
 
     deploy.stdout.on('data', (data) => {
-      successCB('' + data);
-      res += `stdout: ${data}`
+      data = 'stdout: ' + data;
+      successCB(data);
+      res += data
+      process.send({message: [data]});
     });
 
     deploy.stderr.on('data', (data) => {
-      errCB('' + data);
-      res += `stderr: ${data}`;
+      data = 'stderr: ' + data;
+      res += data;
+      process.send({message: [data]});
     });
 
     deploy.on('close', (code) => {
+      process.send({message: [" "]})
       resolve(res);
     });
   })
@@ -81,7 +89,8 @@ const create = (command, errCB=function(){}, successCB=function(){}) => {
 // through the socket
 process.on('message', (m) => {
   if(!init) return;
-  const date = ":v" + Date.now();
+  version++;
+  const date = ":v" + version;
 
   // build docker containers
   // a new set of promises have to be created since the old promises are resolved
@@ -98,7 +107,6 @@ process.on('message', (m) => {
     const setKubePromises = images.map((image) => {
       return create(`${config[image].kubeSet}${config[image].newName}`);
     });
-    process.send({message: codes});
     return Promise.all(setKubePromises)
   })
   .then((codes) => {
@@ -106,35 +114,42 @@ process.on('message', (m) => {
     // if we do not wait, then the we get an error when we try to remove the docker container
     // saying the container is still in use
     // TODO: come up with a better gaurantee to not continue until we switch over
+
+    // NOTE: if frasajaJson.reload === true send promise
     const waitPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve('DONE WAITING');
-      }, 5000);
+      }, 3000);
     });
-    process.send({message: codes});
-    return Promise.all([waitPromise]);
+
+    // user wants to get rid of old docker images
+    // user can set clear to "false" and reload to "true"
+    if(frasajaJson.clear === "true"){
+      return Promise.all([waitPromise]);
+    }
   })
   .then((res) => {
     // delete old docker containers
     // when the docker image is successfully deleted,
     // the id is removed from config[image].oldImageIDs
     const removeDockerImagesPromises = images.reduce((arr, image) => {
-      const promises = config[image].oldImageIDs.map((oldID) => {
+      const promises = Object.keys(config[image].oldImageIDs).map((oldID) => {
         const command = `docker rmi ${oldID} -f`;
         return create(command, onErrorDockerRemove(command, image, oldID), onSuccessDockerRemove(image, oldID));
       })
       return arr.concat(promises);
     }, []);
-
-    process.send({message: res});
     return Promise.all(removeDockerImagesPromises)
   })
   .then((codes) => {
-    // send messages to front-end socket
-    process.send({message: codes});
-    process.send({message: [JSON.stringify(config)]});
+    // user wants to refresh iframe
+    if(frasajaJson.reload === "true"){
+      process.send({ refresh: true });
+    }
   })
 })
+
+
 
 // ==========================RUN BUILD ON CONNECT=============================================
 // this is run at the very beginning to build the docker images and kubernetes clusters
@@ -144,12 +159,10 @@ const dockerPromises = images.map((image) => { return create(`${config[image].do
 Promise.all(dockerPromises).then((codes) => {
   // create kubernetes objects
   const kubePromises = images.map((image) => { return create(config[image].kubeCreate); });
-  process.send({message: codes});
   return Promise.all(kubePromises)
 }).then((codes) => {
   // set init to true so the on message listener knows the docker containers
   // and kubernetes objects are good to go
   init = true;
-  process.send({message: codes});
-  process.send({message: [JSON.stringify(config)]});
+  process.send({ refresh: true });
 })

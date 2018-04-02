@@ -1,102 +1,142 @@
 import React from "react";
-import Header from "./Header";
-import Main from "./Main";
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 
-const socket = io.connect(
-  location.href,
-  {
-    transports: ['websocket'],
-    upgrade: false,
-    forceNew: true,
-    reconnection: true,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax : 5000,
-    reconnectionAttempts: 99999
-  }
-);
+import Main from "./Main";
+import Navbar from "./Navbar";
+import socketConnect from "../socket.js";
 
 class App extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      whichScreen: 'service-view',
-      services: {0: '31000', 1: '31001', 2: '31002'}, //make empty after fetching services works
+      services: [], //make empty after fetching services works
       iframe: 0,
-      refreshBool: true,
+      data: [],
+      loading: true,
+      url: ''
     };
-    this.data = [];
-    this.changeService = this.changeService.bind(this);
-    this.changeScreen = this.changeScreen.bind(this);
-    this.refresh = this.refresh.bind(this);
-    socket.on('refresh-page', (data) => {
-      console.log('client socket receiving something', data);
-      data.message.forEach((m) => {
-        this.data.push(m);
-      })
-      //   const li = document.createElement('li');
-      //   li.append(m);
-      //   this.data.push(li);
-      // });
-      setTimeout(() => {
-        this.refresh();
-      }, 500);
-    });
   }
-  
+
   componentDidMount() {
-    //fetch services and store them in state
-    // const url = '...';
-    // fetch(url)
-    //   .then((res) => res.json())
-    //   .then((data) => {
-        // initial obj
-        // data.serviceList.services.forEach((service, index) => {
-        //   let portNum = service.internalEndpoint.ports[0].nodePort
-        //   if (portNum > 0), obj[index] = portNum
-        // })
-        //setState({services: obj})
+    // add event listener for we receive data
+    const socket = socketConnect();
 
-      //  })
-    //http://192.168.64.27:30000/api/v1/overview/default?filterBy=&itemsPerPage=10&name=&page=1&sortBy=d,creationTimestamp
-  }
-
-  refresh() {
-    let refreshBool = this.state.refreshBool ? false : true;
-    this.setState({
-      refreshBool: refreshBool,
+    // refresh signal sent when kubernetes objects are first created
+    // and after the pause before deleting
+    socket.on('refresh-page', (data) => {
+      // console.log('MESSAGE', data);
+      this.setState((prevState) => {
+        return {
+          data: prevState.data.concat(data.message)
+        }
+      }, () => {
+        if(data.refresh){
+          if(!Object.keys(this.state.services).length){
+            this.updateServices()
+          }
+          else {
+            this.refresh();
+          }
+        }
+      })
     });
   }
 
-  changeService(e) {
-    let buttonId = e.target.id;
-    this.setState({
-      iframe: buttonId
+  // fetch services and store them in state
+  updateServices = () => {
+    const url = '/services';
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState((prevState) => {
+          const url = (data.services.length) ?
+            `http://${window.location.hostname}${data.services[prevState.iframe].PORT}`:
+            '';
+
+          return {
+            services: data.services,
+            url: url
+          }
+        }, () => { this.refresh(); })
+      })
+  }
+
+  // we manually change the iframe src
+  // otherwise refreshing the iframe will not work in react
+  // we do keep track of the url for the url bar
+  refresh = () => {
+    // if(!this.state.services.length || this.state.iframe >= this.state.services.length){
+    //   return;
+    // }
+    if(!this.state.url){
+      return;
+    }
+
+    const iframe = document.getElementById('screen-display');
+    if(!iframe){
+      return;
+    }
+
+    // const iframePort = this.state.services[this.state.iframe].PORT;
+    // const iframeUrl = "http://" + window.location.hostname + iframePort;
+    const iframeUrl = this.state.url;
+    iframe.src = iframeUrl;
+  }
+
+  clear = () => {
+    this.setState({data: []});
+  }
+
+  // called when clicking service link
+  changeScreen = (e) => {
+    const screen = parseInt(e.target.id, 10);
+    this.setState((prevState) => {
+      const url = (!prevState.services.length || screen >= prevState.services.length) ?
+        '':
+        `http://${window.location.hostname}${prevState.services[screen].PORT}`
+
+      return {
+        iframe: screen,
+        url: url
+      }
+    }, () => {
+      this.refresh();
     });
   }
 
-  changeScreen(e) {
-    let screen = e.target.id;
-    this.setState({
-      whichScreen: screen
-    });
+  changeUrl = (newUrl) => {
+    // const newUrl = e.target.value;
+    this.setState((prevState) => {
+      return {
+        url: newUrl
+      }
+    }, () => {
+      this.refresh();
+    })
   }
 
   render(){
+    console.log(this.state);
     return (
-      <div id='wrapper'>
-        <Header/>
-        <Main 
-          whichScreen={this.state.whichScreen}
-          services={this.state.services}
+      <div id="wrapper">
+        <Navbar
+          location={this.props.history.location.pathname}
+        />
+        <Main
           iframe={this.state.iframe}
-          changeService={this.changeService}
+          services={this.state.services}
+          data={this.state.data}
           changeScreen={this.changeScreen}
           refresh={this.refresh}
-          data={this.data}
+          clear={this.clear}
+          location={this.props.history.location.pathname}
+          url={this.state.url}
+          changeUrl={this.changeUrl}
         />
       </div>
     );
   }
 }
 
-export default App;
+
+export default withRouter(App);

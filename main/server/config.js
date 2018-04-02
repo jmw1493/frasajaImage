@@ -14,7 +14,7 @@ const fs = require('fs');
 // may be done by parsing Dockerfiles
 
 // =================PARSE COMMAND IN FRASAJA.JSON=================
-// gives the directory in a command an absolute path 
+// gives the directory in a command an absolute path
 const fixPath = (str) => {
   let prev = '';
   let dir = '';
@@ -113,7 +113,7 @@ const addKube = () => {
           dockerEnd: '',
           newName: '',
           newImageID: '',
-          oldImageIDs: []
+          oldImageIDs: {}
         };
       })
     });

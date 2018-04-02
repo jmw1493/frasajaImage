@@ -6,19 +6,17 @@
 delete:
 	kubectl delete deployment kubernetes-frasaja
 	kubectl delete service kubernetes-frasaja
-	# docker rmi kubernetes-frasaja:v1 -f
-
 	kubectl delete deployment my-deployment
 	kubectl delete service my-service
-	docker rmi my-server:v1 -f
+	# kubectl delete service my-service2
 
 
 .PHONY: create
 create:
 	@eval $$(minikube docker-env) ;\
-
-	# docker build -t my-server:v1 ./test
-
 	docker build -t kubernetes-frasaja:v1 ./main
 	kubectl create -f ./main/deployment.yaml
 
+.PHONY: build
+build:
+	docker build -t kubernetes-frasaja:v1 ./main

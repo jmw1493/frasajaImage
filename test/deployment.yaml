@@ -32,7 +32,7 @@ metadata:
   labels:
     run: my-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: my-server
   ports:

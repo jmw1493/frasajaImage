@@ -1,0 +1,13 @@
+#terminal {
+  display: inline-block;
+  overflow: scroll;
+  font-size: 90%;
+
+  p {
+    padding: 0px 8px;
+    marging: 0px;
+  }
+  // overflow-y: scroll;
+  // word-wrap: break-word;
+  // overflow-x: scroll;
+}

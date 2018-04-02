@@ -1,5 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App.js";
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 
-ReactDOM.render(<App/>, document.getElementById('root'))
+import App from "./components/App.js";
+import style from "./scss/index.scss";
+
+ReactDOM.render(<Router><App/></Router>, document.getElementById('root'))

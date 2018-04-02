@@ -3,9 +3,7 @@ const app = express();
 const path = require('path');
 
 app.get('/', (req, res, next) => {
-  console.log("fghjlaksjdhfkjahdsfkjh")
-  res.send("hello again Frank hjgjhg");
-  // res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
