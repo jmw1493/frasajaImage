@@ -1,37 +1,36 @@
 import React from "react";
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-class Navbar extends React.Component{
+const paths = {
+  "/service": "Service View",
+  "/terminal": "Terminal Output"
+};
 
-  render() {
-    const headerArr = [], serviceArr = [];
-    if (this.props.whichScreen === 'service-view') {
-      headerArr.push(
-      <div id='service-header'>
-        <h1 key={20}>Services</h1>
-      </div>
-    );
-      Object.keys(this.props.services).forEach((service, index) => {
-        serviceArr.push(
-          <button 
-            key={index} 
-            id={index} 
-            className='service-button' 
-            onClick={this.props.changeService}
-          >
-            service {index}
-          </button>
-        );
-      });
-    }
-    return (
-      <nav>
-        {headerArr}
-        <div id='service-list'>
-          {serviceArr}
-        </div>
-      </nav>
-    );
-  }
+const Navbar = (props) => {
+  return (
+    <nav id='above-iframe'>
+      <ul>
+        <img src="/network.svg" />
+        {Object.keys(paths).map((path) => (
+          <li key={path}>
+            <Link
+              name={path}
+              className={(props.location.includes(path)) ? "activeLink": ""}
+              to={path}
+            >
+              {paths[path]}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+
+Navbar.propTypes = {
+  location: PropTypes.string.isRequired
 }
 
 export default Navbar;

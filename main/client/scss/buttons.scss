@@ -1,0 +1,25 @@
+
+$blue: #81b1a6;
+$orange: #DF744A;
+
+.blue-button {
+  position: relative;
+  width: 80%;
+  display: block;
+  text-align: center;
+  color: white;
+  background-color: $blue;
+  text-decoration: none;
+  margin-bottom: 10px;
+  padding: 10px 0px;
+  border-radius: 5%;
+}
+
+.blue-button:hover {
+  background-color: darken($blue, 18%);
+  cursor: pointer;
+}
+
+.blue-button-active {
+  background-color: darken($blue, 18%);
+}

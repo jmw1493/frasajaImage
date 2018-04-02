@@ -8,6 +8,7 @@ let obj = {
   path: []
 };
 
+
 const watchPath = path.resolve(__dirname, '../test');
 
 // this listens until there is a larger array of paths and events
@@ -15,12 +16,8 @@ const watchPath = path.resolve(__dirname, '../test');
 function send(e){
   setTimeout(() => {
     if(e > 0 && e >= obj.event.length){
-      const str = "Change in files:\n\t" + obj.path.filter(function(path, i){
-        return obj.path.indexOf(path) === i;
-      }).join("\n\t") + "\npid: " + process.pid;
-
       // sends a message back to parent process in index.js
-      process.send({message: [str]});
+      process.send({message: obj.path});
 
       obj = {
         event: [],

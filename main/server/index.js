@@ -4,6 +4,8 @@ const express = require('express');
 const app = express();
 const socket = require('socket.io');
 
+const { spawn } = require('child_process');
+
 // runWatch is called when the socket connects with client
 // (ie user refreshes the page)
 // creates process that run build.js and watch.js
@@ -31,6 +33,7 @@ function runWatch(socket){
   const watch = fork(watchPath);
 
   watch.on('message', (m) => {
+    // TODO: restart build.js if change to a yaml/json file
     socket.emit('refresh-page', m);
     build.send({message: 'go'});
   })
@@ -40,9 +43,69 @@ function runWatch(socket){
 // send html requests for css and js files
 app.use(express.static(path.resolve(__dirname, '../build')))
 
+// send the services created
+app.get('/services', (req, res, next) => {
+  const getServices = spawn('kubectl', ['get', 'services']);
+  let response = '';
+
+  getServices.stdout.on('data', (data) => {
+    response += data;
+  });
+
+  getServices.stderr.on('data', (data) => {
+    response += data;
+  });
+
+  getServices.on('close', (code) => {
+    res.locals.data = response
+    next();
+  });
+}, (req, res, next) => {
+  // NOTE: take out 'ExternalName' later if necessary
+  // for now returning services that are exposed on minikube
+  // do not includes the kubernetes exposed service or our service
+  const rows = res.locals.data.split('\n');
+  const labels = [];
+
+  const filteredRows = rows.reduce((record, row, i) => {
+    const exposed = ['kubernetes ', 'kubernetes-frasaja ', 'ClusterIP', 'ExternalName'].reduce((bool, word) => {
+      return bool && !row.includes(word);
+    }, true);
+
+    if(!exposed){
+      return record;
+    }
+
+    const columns = row.split(' ');
+    const obj = {};
+
+    columns.forEach((col) => {
+      if(!i && col){
+        labels.push(col);
+      }
+      else if(col){
+        const key = labels[Object.keys(obj).length];
+        obj[key] = col;
+      }
+    })
+
+    if(Object.keys(obj).length){
+      const ports = obj['PORT(S)'];
+      obj.PORT = ports.slice(ports.indexOf(':'), ports.indexOf('/'))
+      record.push(obj);
+    }
+    return record;
+
+  }, []);
+
+  res.json({
+    services: filteredRows
+  });
+})
+
 // serves the static html file that has the iframe that
 // requests the test's exposed services
-app.get('/', (req, res, next) => {
+app.get('/*', (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../build/index.html'));
 })
 
