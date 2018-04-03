@@ -9,7 +9,8 @@ let obj = {
 };
 
 //need one for test2 as well
-const watchPath = path.resolve(__dirname, '../test');
+// const watchPath = path.resolve(__dirname, '../test');
+const watchPath = path.resolve(__dirname, '../test2');
 
 // this listens until there is a larger array of paths and events
 // limits the number of calls we make to the front end
@@ -35,7 +36,8 @@ const client = chokidar.watch([watchPath], {
   persistent: true,
   usePolling: true,
   interval: 500,
-  ignored: '/usr/src/app/test/node_modules'
+  // ignored: '/usr/src/app/test/node_modules'
+  ignored: '/usr/src/app/test2/node_modules'
 });
 
 // collects the paths and events when a file changes
