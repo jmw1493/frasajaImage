@@ -17,13 +17,14 @@ RUN npm install -g -s --no-progress yarn && \
     yarn && \
     yarn run build && \
     yarn install && \
-    yarn cache clean 
+    yarn cache clean
+# RUN npm install -g -s --no-progress && \
+#     npm run build
 
-# Further remove the unnecessary files. Webpack has already bundled client files, both can be removed. 
-RUN rm -r ./client 
-RUN rm ./webpack.config.js 
+# Further remove the unnecessary files. Webpack has already bundled client files, both can be removed.
+RUN rm -r ./client
+RUN rm ./webpack.config.js
 
 EXPOSE 8080
 
-CMD [ "yarn", "start" ]
-
+CMD [ "npm", "start" ]

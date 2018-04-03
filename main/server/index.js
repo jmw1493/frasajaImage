@@ -6,15 +6,19 @@ const socket = require('socket.io');
 
 const { spawn } = require('child_process');
 
+const files = {
+  'favicon.ico': true,
+  'network.svg': true,
+  'refresh-button.svg': true,
+  'bundle.js': true,
+  'styles.css': true
+}
+
 // runWatch is called when the socket connects with client
 // (ie user refreshes the page)
 // creates process that run build.js and watch.js
 // fork is similar to spawn but it creates special node js process
 function runWatch(socket){
-  socket.emit('refresh-page', {
-    message: ['I\'m a socket message, yo']
-  });
-
   // build.js is used to rebuild docker images
   // build.js sends messages to the parent about the rebuilt
   // docker image
@@ -24,7 +28,6 @@ function runWatch(socket){
   build.on('message', (m) => {
     socket.emit('refresh-page', m);
   });
-  // build.send({message: 'start'});
 
   // watch.js watches for changes in files
   // the watch process sends back messages on the changed files
@@ -40,9 +43,6 @@ function runWatch(socket){
 }
 
 // ==============SERVER==================================
-// send html requests for css and js files
-app.use(express.static(path.resolve(__dirname, '../build')))
-
 // send the services created
 app.get('/services', (req, res, next) => {
   const getServices = spawn('kubectl', ['get', 'services']);
@@ -103,12 +103,37 @@ app.get('/services', (req, res, next) => {
   });
 })
 
+// ================STATIC FILES=======================================
+// serves loading html for iframe
+app.get('/loading', (req, res, next) => {
+  res.sendFile(path.resolve(__dirname, '../build/loading.html'));
+})
+
+app.get('/:file', (req, res, next) => {
+  if(files[req.params.file]){
+    res.sendFile(path.resolve(__dirname, `../build/${req.params.file}`));
+  }
+  else {
+    res.sendFile(path.resolve(__dirname, '../build/index.html'));
+  }
+})
+
+app.get('/service/:file', (req, res, next) => {
+  if(files[req.params.file]){
+    res.sendFile(path.resolve(__dirname, `../build/${req.params.file}`));
+  }
+  else {
+    res.sendFile(path.resolve(__dirname, '../build/index.html'));
+  }
+})
+
 // serves the static html file that has the iframe that
 // requests the test's exposed services
-app.get('/*', (req, res, next) => {
+app.get('*', (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../build/index.html'));
 })
 
+// ===============RUN SERVER=======================================
 // run server and wait for socket connection
 const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () => {

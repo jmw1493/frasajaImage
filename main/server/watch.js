@@ -3,11 +3,11 @@ const path = require('path');
 const { exec } = require('child_process');
 const fs = require('fs');
 
-let obj = {
+const changes = "Changes in files:";
+const obj = {
   event: [],
-  path: []
+  path: [changes]
 };
-
 
 const watchPath = path.resolve(__dirname, '../test');
 
@@ -17,12 +17,14 @@ function send(e){
   setTimeout(() => {
     if(e > 0 && e >= obj.event.length){
       // sends a message back to parent process in index.js
-      process.send({message: obj.path});
+      process.send({message: obj.path, loading: true});
 
-      obj = {
-        event: [],
-        path: []
-      };
+      // obj = {
+      //   event: [],
+      //   path: [changes]
+      // };
+      obj.event = [];
+      obj.path = [changes];
 
       return send(0);
     }

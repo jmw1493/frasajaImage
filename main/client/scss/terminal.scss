@@ -1,13 +1,25 @@
+$blue: #81b1a6;
+$orange: #DF744A;
+
 #terminal {
   display: inline-block;
   overflow: scroll;
   font-size: 90%;
 
   p {
-    padding: 0px 8px;
-    marging: 0px;
+    padding: 0px;
+    // margin: 0px;
+    margin-top: 0.5em;
+    margin-left: 1em;
   }
-  // overflow-y: scroll;
-  // word-wrap: break-word;
-  // overflow-x: scroll;
+
+  .command {
+    margin-top: 1em;
+    margin-left: 0.3em;
+    color: darken($blue, 18%);
+  }
+
+  .err {
+    color: darken($orange, 10%);
+  }
 }

@@ -12,6 +12,7 @@
 .col-tabs {
   width: 300px;
   padding: 0px 15px;
+  text-align: center;
 
   h1 {
     max-height: 20%;
@@ -48,6 +49,7 @@
       border: 1px solid #ccc;
       // border-radius: 8%;
       font-size: 90%;
+      padding-right: 0.5em;
     }
 
     a {
