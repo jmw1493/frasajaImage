@@ -2,6 +2,7 @@
 @import "./terminal.scss";
 @import "./screen.scss";
 @import "./buttons.scss";
+@import "./loading.scss";
 
 body {
   background-color: whiteSmoke;
@@ -35,15 +36,18 @@ h1 {
   text-align: center;
 }
 
-a:hover {
-  cursor: pointer;
+// a:hover {
+//   cursor: pointer;
+// }
+
+.locked {
+  opacity: 0.5;
 }
 
-// .screen-display {
-//   width: 95%;
-//   height: 92%;
-//   margin: auto;
-//   margin-top: 1%;
-//   border: 2px solid black;
-//   overflow: scroll;
-// }
+.locked:hover {
+  cursor: default;
+}
+
+i {
+  text-align: center;
+}

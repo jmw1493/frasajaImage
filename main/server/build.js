@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-const frasajaJson = require(path.join(__dirname, '../test/frasaja.json'));
+// const frasajaJson = require(path.join(__dirname, '../test/frasaja.json'));
 const config = require(path.join(__dirname, './config.js'));
 const images = Object.keys(config);
 
@@ -71,8 +71,10 @@ const create = (command, errCB=function(){}, successCB=function(){}) => {
 
     deploy.stderr.on('data', (data) => {
       data = 'stderr: ' + data;
+      errCB(data);
       res += data;
       process.send({message: [data]});
+      resolve(res);
     });
 
     deploy.on('close', (code) => {
@@ -110,6 +112,7 @@ process.on('message', (m) => {
     return Promise.all(setKubePromises)
   })
   .then((codes) => {
+    // process.send({ refresh: true });
     // wait for setKubePromise to ACTUALLY finish
     // if we do not wait, then the we get an error when we try to remove the docker container
     // saying the container is still in use
@@ -124,9 +127,9 @@ process.on('message', (m) => {
 
     // user wants to get rid of old docker images
     // user can set clear to "false" and reload to "true"
-    if(frasajaJson.clear === "true"){
-      return Promise.all([waitPromise]);
-    }
+    // if(frasajaJson.clear === "true"){
+    return Promise.all([waitPromise]);
+    // }
   })
   .then((res) => {
     // delete old docker containers
@@ -143,9 +146,9 @@ process.on('message', (m) => {
   })
   .then((codes) => {
     // user wants to refresh iframe
-    if(frasajaJson.reload === "true"){
+    // if(frasajaJson.reload === "true"){
       process.send({ refresh: true });
-    }
+    // }
   })
 })
 
