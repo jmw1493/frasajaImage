@@ -20,7 +20,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
-# use webpack to bundle and remove the uneccessary files
+# use webpack to bundle and remove the unneccessary files
 COPY . ./
 RUN webpack
 RUN rm -r ./client

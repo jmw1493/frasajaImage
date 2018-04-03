@@ -8,7 +8,7 @@ let obj = {
   path: []
 };
 
-
+//need one for test2 as well
 const watchPath = path.resolve(__dirname, '../test');
 
 // this listens until there is a larger array of paths and events

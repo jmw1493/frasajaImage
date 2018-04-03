@@ -8,7 +8,7 @@ delete:
 	kubectl delete service kubernetes-frasaja
 	kubectl delete deployment my-deployment
 	kubectl delete service my-service
-	# kubectl delete service my-service2
+	kubectl delete service test2
 
 
 .PHONY: create

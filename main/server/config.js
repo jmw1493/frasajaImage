@@ -1,5 +1,6 @@
 const path = require('path');
 const config = require(path.join(__dirname, '../test/frasaja.json'));
+// ../frasaja.json --> gets mounted in main/test (a new directory spec'd in yaml & Dockerfile)
 const YAML = require('yamljs');
 const fs = require('fs');
 
@@ -7,7 +8,7 @@ const fs = require('fs');
 // point of this file is to adjust the user's config file to get necessary info
 // as well as create the commands we will be using for each docker image
 
-// TODO: parse docker-compose.yaml file to make config object
+// not anymore --> TODO: parse docker-compose.yaml file to make config object
 
 // TODO: possible todo would be somehow add a key that shows to only
 // rebuild this particular docker container when this directory changes
