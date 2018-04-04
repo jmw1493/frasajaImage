@@ -21,6 +21,7 @@ const Terminal = (props) => {
         <h1>Terminal</h1>
         <div className="scroll">
           <a className={(props.loading) ? "blue-button-locked": "blue-button"} onClick={props.clear}>Clear</a>
+          <a className={(props.loading) ? "blue-button-locked": "blue-button"} onClick={(e) => { window.location.reload(true); }}>Rebuild</a>
         </div>
       </div>
       <div className="col">
