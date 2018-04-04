@@ -92,7 +92,9 @@ app.get('/services', (req, res, next) => {
 
     if(Object.keys(obj).length){
       const ports = obj['PORT(S)'];
-      obj.PORT = ports.slice(ports.indexOf(':'), ports.indexOf('/'))
+      obj.PORT = ports.split(',').map((port) => {
+        return port.slice(port.indexOf(':'), port.indexOf('/'))
+      })
       record.push(obj);
     }
     return record;
@@ -104,7 +106,7 @@ app.get('/services', (req, res, next) => {
   });
 })
 
-// ================STATIC FILES=======================================
+// ================SERVE STATIC FILES=======================================
 // serves loading html for iframe
 app.get('/loading', (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../build/loading.html'));

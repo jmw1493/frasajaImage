@@ -10,35 +10,37 @@ import NotFound from "./NotFound";
 class Main extends React.Component {
 
   render(){
-    // <Route path="/service/no-services" render={() => ( <h1>No Exposed Services</h1> )} />
-    const defaultServiceName = (this.props.services.length) ? this.props.services[this.props.iframe]["NAME"]: "no-services";
+    const serviceIndex = this.props.whichService.service;
+    const portIndex = this.props.whichService.port;
+
+    // default to something like `my-service-2:30107`
+    const defaultServiceName = (this.props.services.length) ? this.props.services[serviceIndex]["NAME"]+this.props.services[serviceIndex]["PORT"][portIndex]: "no-services";
 
     return (
       <div id="main">
         <Switch>
-          <Route exact path="/" render={() => ( <Redirect to={(this.props.services.length) ? `/service/${defaultServiceName}`: "/terminal"} /> )} />
-          <Route exact path="/service" render={() => ( <Redirect to={`/service/${defaultServiceName}`}/> )} />
-          <Route path="/service/:serviceName" render={() => (
-            <Services
-              iframe={this.props.iframe}
-              services={this.props.services}
-              refresh={this.props.refresh}
-              location={this.props.location}
-              url={this.props.url}
-              changeUrl={this.props.changeUrl}
-              pushHistory={this.props.pushHistory}
-              loading={this.props.loading}
-            />)}
-          />
-          <Route path="/terminal" render={() => (
+          <Route exact path="/terminal" render={() => (
             <Terminal
               data={this.props.data}
-              clear={this.props.clear}
               loading={this.props.loading}
+
+              clear={this.props.clear}
             />)}
           />
-          <Route path="/not-found" component={NotFound} />
-          <Route render={() => <Redirect to="/not-found"/>} />
+          <Route exact path="/service/:serviceName" render={() => (
+            <Services
+              services={this.props.services}
+              whichService={this.props.whichService}
+              loading={this.props.loading}
+
+              changeUrl={this.props.changeUrl}
+              refresh={this.props.refresh}
+
+              pushHistory={this.props.pushHistory}
+              location={this.props.location}
+            />)}
+          />
+          <Route render={() => ( <Redirect to={`/service/${defaultServiceName}`}/> )} />
         </Switch>
       </div>
     )
@@ -46,7 +48,6 @@ class Main extends React.Component {
 }
 
 Main.propTypes = {
-  iframe: PropTypes.number.isRequired,
   services: PropTypes.arrayOf(PropTypes.shape({
     ["NAME"]: PropTypes.string.isRequired,
     ["TYPE"]: PropTypes.string.isRequired,
@@ -54,15 +55,22 @@ Main.propTypes = {
     ["EXTERNAL-IP"]: PropTypes.string.isRequired,
     ["PORT(S)"]: PropTypes.string.isRequired,
     ["AGE"]: PropTypes.string.isRequired,
-    ["PORT"]: PropTypes.string.isRequired
+    ["PORT"]: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
   })).isRequired,
+  whichService: PropTypes.shape({
+    service: PropTypes.number.isRequired,
+    port: PropTypes.number.isRequired,
+    url: PropTypes.string.isRequired
+  }).isRequired,
   data: PropTypes.arrayOf(PropTypes.string).isRequired,
+  loading: PropTypes.bool.isRequired,
+
   changeUrl: PropTypes.func.isRequired,
+  clear: PropTypes.func.isRequired,
   refresh: PropTypes.func.isRequired,
-  location: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
+
   pushHistory: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired
+  location: PropTypes.string.isRequired // ie /service/my-service-2:30107
 }
 
 export default Main;

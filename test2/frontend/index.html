@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>To Do</title>
+  </head>
+  <body>
+    hello again!!
+    <form>
+      <input type="text" id="input">
+    </form>
+    <button id="submit">click</button>
+    <ol id="add"></ol>
+  </body>
+  <script>
+    const url = `http://${window.location.hostname}:30025`;
+    const button = document.getElementById('submit');
+    const add = document.getElementById('add');
+    const input = document.getElementById('input');
+
+    // add item to todo list
+    button.addEventListener('click', (e) => {
+      fetch(url, {
+        body: JSON.stringify({data: input.value}),
+        headers: {
+          'content-type': 'application/json'
+        },
+        method: 'POST'
+      }).then(res => {
+        return res.json();
+      }).then(json => {
+        const li = document.createElement('li');
+        li.append(input.value);
+        add.append(li);
+        input.value = '';
+      })
+    })
+
+    // fetch items from memory
+    fetch(url).then((res) => {
+      return res.json();
+    }).then((json) => {
+      console.log(json);
+      json.todo.forEach((item) => {
+        const li = document.createElement('li');
+        li.append(item);
+        add.append(li);
+      })
+    })
+  </script>
+</html>
