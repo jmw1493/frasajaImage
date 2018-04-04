@@ -60,7 +60,7 @@ const create = (command, errCB=function(){}, successCB=function(){}) => {
   return new Promise((resolve, reject) => {
     const deploy = spawn(first, arr);
     let res = '';
-    process.send({message: ["$: " + command]});
+    process.send({message: ["$ " + command]});
 
     deploy.stdout.on('data', (data) => {
       data = 'stdout: ' + data;

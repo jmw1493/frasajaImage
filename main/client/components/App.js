@@ -51,7 +51,6 @@ class App extends React.Component{
 
   // fetch services and store them in state
   updateServices = () => {
-    // http://192.168.64.12:31000
     const url = '/services';
     fetch(url)
       .then((res) => res.json())
@@ -83,15 +82,6 @@ class App extends React.Component{
       this.refresh();
     })
   }
-
-  // overlayIframe = () => {
-  //   const iframe = document.getElementById('screen-display');
-  //   if(!iframe){
-  //     return;
-  //   }
-  //
-  //   iframe.contents().find('body').append("hello, world")
-  // }
 
   // we manually change the iframe src
   // otherwise refreshing the iframe will not work in react

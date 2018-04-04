@@ -10,6 +10,7 @@ const files = {
   'favicon.ico': true,
   'network.svg': true,
   'refresh-button.svg': true,
+  'trash.svg': true,
   'bundle.js': true,
   'styles.css': true
 }
