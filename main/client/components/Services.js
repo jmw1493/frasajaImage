@@ -24,9 +24,13 @@ class Services extends React.Component {
     }
 
     // forward console to our console
-    iframe.contentWindow.console.log = (val) => {
-      console.log(val);
+    const iframe = document.getElementById('screen-display');
+    if(iframe){
+      iframe.contentWindow.console.log = (val) => {
+        console.log(val);
+      }
     }
+    
     this.props.refresh();
   }
 

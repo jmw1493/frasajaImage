@@ -1,5 +1,6 @@
 # before running 'make create'
 # run 'minikube mount /path/to/frasajaImage/test:/mount-9p'
+# run 'minikube mount /path/to/frasajaImage/test2:/mount-9p'
 # in new tab in terminal shell
 
 .PHONY: delete
@@ -8,7 +9,8 @@ delete:
 	kubectl delete service kubernetes-frasaja
 	kubectl delete deployment my-deployment
 	kubectl delete service my-service
-	# kubectl delete service my-service2
+	kubectl delete deployment my-deployment-2
+	kubectl delete service my-service-2
 
 
 .PHONY: create
