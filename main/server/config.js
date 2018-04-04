@@ -1,6 +1,5 @@
 const path = require('path');
-// const config = require(path.join(__dirname, '../test/frasaja.json'));
-const config = require(path.join(__dirname, '../test2/frasaja.json'));
+const config = require(path.join(__dirname, '../test/frasaja.json'));
 // ../frasaja.json --> gets mounted in main/test (a new directory spec'd in yaml & Dockerfile)
 const YAML = require('yamljs');
 const fs = require('fs');
@@ -24,8 +23,7 @@ const fixPath = (str) => {
 
   const terms = str.trim().split(' ').map((word, i) => {
     if(word.includes('.') || word.includes('/')){
-      // dir = path.join(__dirname, '../test', word);
-      dir = path.join(__dirname, '../test2', word);
+      dir = path.join(__dirname, '../test', word);
       return dir;
     }
     if(word.includes(':')){
