@@ -1,5 +1,5 @@
 {
-  "docker": ["docker build -t my-server:v1 ."],
-  "kubernetes": ["kubectl create -f ./deployment.yaml"],
+  "docker": ["docker build -t my-server:v1 .", "docker build -t backend:v1 ./test3/backend", "docker build -t frontend:v1 ./test3/frontend"],
+  "kubernetes": ["kubectl create -f ./deployment.yaml", "kubectl create -f ./test3/deployment.yaml"],
   "reload": "true"
 }

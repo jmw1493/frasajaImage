@@ -7,14 +7,11 @@
 delete:
 	kubectl delete deployment kubernetes-frasaja
 	kubectl delete service kubernetes-frasaja
-	kubectl delete deployment my-deployment
-	kubectl delete service my-service
 	kubectl delete deployment backend-deployment
 	kubectl delete deployment frontend-deployment
-
-
-	# kubectl delete deployment my-deployment-2
-	# kubectl delete service my-service-2
+	kubectl delete service my-service
+	kubectl delete deployment my-deployment
+	kubectl delete service my-service-2
 
 
 .PHONY: create
