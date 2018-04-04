@@ -3,6 +3,7 @@ $orange: #DF744A;
 
 #terminal {
   display: inline-block;
+  max-width: 100%;
   overflow: scroll;
   font-size: 90%;
 
@@ -21,5 +22,9 @@ $orange: #DF744A;
 
   .err {
     color: darken($orange, 10%);
+  }
+
+  img {
+    width: 1em;
   }
 }

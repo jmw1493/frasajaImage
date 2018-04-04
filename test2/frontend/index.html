@@ -5,6 +5,7 @@
     <title>To Do</title>
   </head>
   <body>
+    hello again!!
     <form>
       <input type="text" id="input">
     </form>
@@ -13,7 +14,7 @@
     <ol id="add"></ol>
   </body>
   <script>
-    const url = 'http://192.168.64.31:30025';
+    const url = `http://${window.location.hostname}:30025`;
     const button = document.getElementById('submit');
     const add = document.getElementById('add');
     const input = document.getElementById('input');

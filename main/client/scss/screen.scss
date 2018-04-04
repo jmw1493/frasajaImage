@@ -1,7 +1,7 @@
 
 .row {
   flex: 1 1 auto;
-  width: 100%;
+  max-width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -16,6 +16,10 @@
 
   h1 {
     max-height: 20%;
+  }
+
+  i {
+    opacity: 0.5;
   }
 
   .scroll {
@@ -35,6 +39,17 @@
   flex-direction: column;
   align-items: stretch;
 
+  .frame {
+    flex: 1 1 auto;
+    background-color: white;
+    margin: 0 auto;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    border: 1px solid #ccc;
+  }
+
   .input {
     width: 100%;
     margin-top: 1%;
@@ -44,12 +59,12 @@
     align-items: center;
 
     input {
-      flex-grow: 1;
+      flex: 1 1 auto;
       line-height: 30px;
       border: 1px solid #ccc;
       // border-radius: 8%;
       font-size: 90%;
-      padding-right: 0.5em;
+      padding-left: 0.5em;
     }
 
     a {
@@ -58,15 +73,5 @@
         width: 20px;
       }
     }
-  }
-
-  .frame {
-    background-color: white;
-    margin: 0 auto;
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    height: 100%;
-    border: 1px solid #ccc;
   }
 }
