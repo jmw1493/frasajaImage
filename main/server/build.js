@@ -122,7 +122,7 @@ process.on('message', (m) => {
     const waitPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve('DONE WAITING');
-      }, 3000);
+      }, 5000);
     });
 
     // user wants to get rid of old docker images

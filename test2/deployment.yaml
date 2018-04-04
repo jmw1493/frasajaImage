@@ -10,14 +10,14 @@ spec:
   # select on one label defined in Pod template
   selector:
     matchLabels:
-      app: my-deployment-2
+      app: my-deployment
   # pod template
   # pods are labeled app: server
   # run server image if not local
   template:
     metadata:
       labels:
-        app: my-deployment-2
+        app: my-deployment
     spec:
       containers:
       - name: frontend
@@ -29,7 +29,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   # create Deployment named server-deployment
-  name: backend-deployment-2
+  name: backend-deployment
 spec:
   # create three replicated Pods
   replicas: 1
@@ -37,14 +37,14 @@ spec:
   # select on one label defined in Pod template
   selector:
     matchLabels:
-      app: my-deployment-2
+      app: my-deployment
   # pod template
   # pods are labeled app: server
   # run server image if not local
   template:
     metadata:
       labels:
-        app: my-deployment-2
+        app: my-deployment
     spec:
       containers:
       - name: backend
@@ -55,13 +55,13 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: my-service-2
+  name: my-service
   labels:
-    run: my-service-2
+    run: my-service
 spec:
   type: LoadBalancer
   selector:
-    app: my-deployment-2
+    app: my-deployment
   ports:
   - name: frontend
     protocol: TCP
