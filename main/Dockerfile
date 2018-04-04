@@ -8,21 +8,21 @@ ENV KUBE_LATEST_VERSION="v1.10.0"
 WORKDIR /usr/src/app
 COPY . ./
 
-# run shell file. Install additional external packages.
-RUN chmod +x ./install.sh && \
+# Recursively gives unix user read write and executable access to entire project directory run shell file. Then runs a shell to install additional external packages.
+RUN chmod -R 777 ./ && \
     ./install.sh
 
 # installing yarn (faster version of NPM). Running npm install equivalent (abbreviated to just yarn), running yarn build (webpack), and then cleaning up all non-production dependencies.
 RUN npm install -g -s --no-progress yarn && \
-    yarn && \
+    sudo yarn && \
     yarn run build && \
     yarn install && \
     yarn cache clean
-    
+
 # Further remove the unnecessary files. Webpack has already bundled client files, both can be removed.
-RUN rm -r ./client
-RUN rm ./webpack.config.js
+    RUN rm -r ./client
+    RUN rm ./webpack.config.js
 
 EXPOSE 8080
 
-CMD [ "npm", "start" ]
+CMD [ "yarn", "start" ]

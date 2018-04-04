@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import Services from "./Services";
 import Terminal from "./Terminal";
-import NotFound from "./NotFound";
 
 
 class Main extends React.Component {
